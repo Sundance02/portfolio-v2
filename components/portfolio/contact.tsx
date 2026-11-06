@@ -72,7 +72,7 @@ export function Contact() {
         <GuillocheBand className="h-24 text-background opacity-60" />
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 font-mono text-xs uppercase tracking-widest text-background/60 sm:flex-row sm:items-center sm:justify-between">
           <span>© 2026 Sahatsawat Vongboonthaneth</span>
-          <span>Certified original · Bangkok, Thailand</span>
+          <span>Bangkok, Thailand</span>
         </div>
       </footer>
     </>

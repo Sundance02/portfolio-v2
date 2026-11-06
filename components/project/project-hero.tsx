@@ -84,7 +84,7 @@ export function ProjectHero({ project, index }: { project: Project; index: numbe
         </div>
 
         <Microprint
-          phrase={`${project.title} · ${project.category} · ${project.year} · Certified Original · `}
+          phrase={`${project.title} · ${project.category} · ${project.year} · `}
           className="border-t border-background/15 py-3 text-background/50"
         />
       </section>
