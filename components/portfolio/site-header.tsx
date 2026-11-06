@@ -1,3 +1,5 @@
+import { FileText } from 'lucide-react'
+
 const links = [
   { href: '/#work', label: 'Work' },
   { href: '/#stack', label: 'Stack' },
@@ -12,9 +14,9 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
         <a href="/" className="flex items-center gap-3 font-semibold tracking-tight">
           <span className="flex size-8 items-center justify-center rounded-full border border-current font-mono text-xs">
-            EV
+            SV
           </span>
-          <span className="hidden sm:inline">Elena Varga</span>
+          <span className="hidden sm:inline">Sahatsawat Vongboonthaneth</span>
         </a>
         <nav aria-label="Primary">
           <ul className="flex items-center gap-6 text-sm">
@@ -28,6 +30,17 @@ export function SiteHeader() {
                 </a>
               </li>
             ))}
+            <li>
+              <a
+                href="/CV_Sahatsawat-Vongboonthaneth.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-current px-3 py-1 font-mono text-xs transition-opacity hover:opacity-80"
+              >
+                <FileText className="size-3" />
+                <span>CV</span>
+              </a>
+            </li>
           </ul>
         </nav>
       </div>

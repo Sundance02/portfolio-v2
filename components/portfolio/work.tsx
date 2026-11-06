@@ -15,7 +15,7 @@ export function Work() {
           </p>
         </div>
         <span className="hidden font-mono text-xs uppercase tracking-widest text-muted-foreground md:block">
-          2023 — 2026
+          2024 — 2026
         </span>
       </div>
 
@@ -26,15 +26,15 @@ export function Work() {
               href={`/work/${project.slug}`}
               className="group flex flex-col gap-5 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-foreground"
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border bg-muted/30">
                 <Image
                   src={project.image || '/placeholder.svg'}
                   alt={project.alt}
                   fill
                   sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-cover grayscale transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  className="object-contain p-2 transition-all duration-700 ease-out group-hover:scale-[1.03]"
                 />
-                <span className="absolute right-4 top-4 flex size-10 items-center justify-center rounded-full bg-background text-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                <span className="absolute right-4 top-4 flex size-10 items-center justify-center rounded-full bg-background text-foreground opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                   <ArrowUpRight className="size-4" aria-hidden="true" />
                 </span>
               </div>

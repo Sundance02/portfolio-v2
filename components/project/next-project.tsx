@@ -10,7 +10,7 @@ export function NextProject({ project }: { project: Project }) {
         className="group flex flex-col gap-6 border-t pt-16 md:flex-row md:items-end md:justify-between md:pt-24"
       >
         <div className="flex flex-col gap-4">
-          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Next case study</span>
+          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Next project</span>
           <span className="text-[clamp(2.5rem,8vw,6.5rem)] font-semibold leading-[0.9] tracking-tighter underline-offset-8 group-hover:underline">
             {project.title}
           </span>

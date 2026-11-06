@@ -33,7 +33,7 @@ export function ProjectHero({ project, index }: { project: Project; index: numbe
               All work
             </Link>
             <span>
-              Case study · No. EV—{project.year}—{String(index + 1).padStart(2, '0')}
+              Project · No. SV—{project.year}—{String(index + 1).padStart(2, '0')}
             </span>
           </div>
 
@@ -59,25 +59,27 @@ export function ProjectHero({ project, index }: { project: Project; index: numbe
                 </div>
               ))}
             </dl>
-            <div className="flex flex-wrap gap-3">
-              {project.links.map((link, linkIndex) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={
-                    linkIndex === 0
-                      ? 'inline-flex items-center gap-2 rounded-full bg-background px-6 py-3 text-sm font-medium text-foreground transition-transform hover:-translate-y-0.5'
-                      : 'inline-flex items-center gap-2 rounded-full border border-background/40 px-6 py-3 text-sm font-medium transition-colors hover:bg-background hover:text-foreground'
-                  }
-                >
-                  {link.label}
-                  <ArrowUpRight className="size-4" aria-hidden="true" />
-                  <span className="sr-only">(opens in a new tab)</span>
-                </a>
-              ))}
-            </div>
+            {project.links && project.links.length > 0 && (
+              <div className="flex flex-wrap gap-3">
+                {project.links.map((link, linkIndex) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={
+                      linkIndex === 0
+                        ? 'inline-flex items-center gap-2 rounded-full bg-background px-6 py-3 text-sm font-medium text-foreground transition-transform hover:-translate-y-0.5'
+                        : 'inline-flex items-center gap-2 rounded-full border border-background/40 px-6 py-3 text-sm font-medium transition-colors hover:bg-background hover:text-foreground'
+                    }
+                  >
+                    {link.label}
+                    <ArrowUpRight className="size-4" aria-hidden="true" />
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -88,14 +90,14 @@ export function ProjectHero({ project, index }: { project: Project; index: numbe
       </section>
 
       <div className="mx-auto max-w-7xl px-6 pt-6 md:pt-10">
-        <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-muted">
+        <div className="relative aspect-[16/9] overflow-hidden rounded-2xl border bg-muted/30">
           <Image
             src={project.image || '/placeholder.svg'}
             alt={project.alt}
             fill
             priority
             sizes="(min-width: 1280px) 1232px, 100vw"
-            className="object-cover grayscale"
+            className="object-contain"
           />
         </div>
       </div>

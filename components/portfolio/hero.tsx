@@ -1,4 +1,4 @@
-import { ArrowDownRight } from 'lucide-react'
+import { ArrowDownRight, FileText } from 'lucide-react'
 import { GuillocheRosette } from './guilloche'
 import { Microprint } from './microprint'
 
@@ -16,30 +16,23 @@ export function Hero() {
       </div>
 
       <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-end gap-10 px-6 pb-12 pt-32">
-        <div
-          className="reveal flex flex-wrap items-center justify-between gap-4 font-mono text-xs uppercase tracking-widest text-background/70"
-          style={{ animationDelay: '100ms' }}
-        >
-          <span>Portfolio · Vol. 07</span>
-          <span>No. EV—2026—0611</span>
-        </div>
-
         <h1
-          className="reveal text-[clamp(3.5rem,13vw,11.5rem)] font-semibold leading-[0.88] tracking-tighter text-balance"
+          className="reveal text-[clamp(2.75rem,8.5vw,7.8rem)] font-semibold leading-[0.92] tracking-tighter text-balance"
           style={{ animationDelay: '250ms' }}
         >
-          Elena
+          Sahatsawat
           <br />
-          Varga
+          Vongboonthaneth
         </h1>
 
         <div
           className="reveal flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
           style={{ animationDelay: '450ms' }}
         >
-          <p className="max-w-md text-lg leading-relaxed text-background/80 text-pretty">
-            Full-stack software engineer. I build fast, reliable systems — from typed APIs to the pixels
-            on screen — for institutions, studios and ambitious startups.
+          <p className="max-w-xl text-lg leading-relaxed text-background/80 text-pretty">
+            Full-stack web and mobile developer. I build production-grade applications — from
+            designing SQL/NoSQL databases to crafting intuitive UIs with React, Next.js, and React Native,
+            with robust backend logic in Express.js and Django.
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <a
@@ -50,10 +43,13 @@ export function Hero() {
               <ArrowDownRight className="size-4" aria-hidden="true" />
             </a>
             <a
-              href="#contact"
-              className="inline-flex items-center rounded-full border border-background/40 px-6 py-3 text-sm font-medium transition-colors hover:bg-background hover:text-foreground"
+              href="/CV_Sahatsawat-Vongboonthaneth.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-background/40 px-6 py-3 text-sm font-medium transition-colors hover:bg-background hover:text-foreground"
             >
-              Get in touch
+              <FileText className="size-4" />
+              Download CV
             </a>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { Project } from '@/lib/projects'
 import { getLogo } from '@/lib/stack'
 import { SectionLabel } from '@/components/portfolio/section-label'
@@ -14,6 +15,8 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 }
 
 export function ProjectDetails({ project }: { project: Project }) {
+  const isThesis = project.slug === 'thesis-project'
+
   return (
     <div className="mx-auto flex max-w-7xl flex-col px-6 pt-16 md:pt-24">
       <Row label="Overview">
@@ -22,9 +25,12 @@ export function ProjectDetails({ project }: { project: Project }) {
         </p>
       </Row>
 
-      <Row label="The challenge">
-        <p className="max-w-3xl text-lg leading-relaxed text-pretty">{project.challenge}</p>
-      </Row>
+      {/* The challenge: Kept only for Urban Waste Segregation System */}
+      {isThesis && project.challenge && (
+        <Row label="The challenge">
+          <p className="max-w-3xl text-lg leading-relaxed text-pretty">{project.challenge}</p>
+        </Row>
+      )}
 
       <Row label="Approach">
         <ul className="grid gap-10 md:grid-cols-3">
@@ -36,6 +42,29 @@ export function ProjectDetails({ project }: { project: Project }) {
           ))}
         </ul>
       </Row>
+
+      {project.gallery && project.gallery.length > 0 && (
+        <Row label="Gallery">
+          <div className="grid gap-8 sm:grid-cols-2">
+            {project.gallery.map((item, idx) => (
+              <figure key={idx} className="flex flex-col gap-3">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-xl border bg-muted/30">
+                  <Image
+                    src={item.src}
+                    alt={item.caption}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-contain p-2 transition-transform duration-500 hover:scale-[1.02]"
+                  />
+                </div>
+                <figcaption className="font-mono text-xs text-muted-foreground">
+                  {item.caption}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </Row>
+      )}
 
       <Row label="Architecture">
         <dl className="flex flex-col">
@@ -53,20 +82,26 @@ export function ProjectDetails({ project }: { project: Project }) {
         </dl>
       </Row>
 
-      <Row label="In the code">
-        <CodeSnippet filename={project.snippet.filename} code={project.snippet.code} />
-      </Row>
+      {/* In the code: Kept only for Urban Waste Segregation System */}
+      {isThesis && project.snippet && (
+        <Row label="In the code">
+          <CodeSnippet filename={project.snippet.filename} code={project.snippet.code} />
+        </Row>
+      )}
 
-      <Row label="Outcomes">
-        <dl className="grid gap-px overflow-hidden rounded-2xl border bg-border md:grid-cols-3">
-          {project.outcomes.map((outcome) => (
-            <div key={outcome.label} className="flex flex-col-reverse justify-end gap-3 bg-background p-6 md:p-8">
-              <dt className="leading-relaxed text-muted-foreground text-pretty">{outcome.label}</dt>
-              <dd className="font-mono text-3xl font-medium tracking-tight md:text-4xl">{outcome.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </Row>
+      {/* Outcomes: Kept only for Urban Waste Segregation System */}
+      {isThesis && project.outcomes && project.outcomes.length > 0 && (
+        <Row label="Outcomes">
+          <dl className="grid gap-px overflow-hidden rounded-2xl border bg-border md:grid-cols-3">
+            {project.outcomes.map((outcome) => (
+              <div key={outcome.label} className="flex flex-col-reverse justify-end gap-3 bg-background p-6 md:p-8">
+                <dt className="leading-relaxed text-muted-foreground text-pretty">{outcome.label}</dt>
+                <dd className="font-mono text-3xl font-medium tracking-tight md:text-4xl">{outcome.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </Row>
+      )}
 
       <Row label="Built with">
         <ul className="flex flex-wrap gap-3">

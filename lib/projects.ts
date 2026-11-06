@@ -10,271 +10,201 @@ export type Project = {
   duration: string
   team: string
   stack: string[]
-  links: { label: string; href: string }[]
+  links?: { label: string; href: string }[]
   overview: string
-  challenge: string
+  challenge?: string
   approach: { title: string; detail: string }[]
   architecture: { layer: string; detail: string }[]
-  snippet: { filename: string; code: string }
-  outcomes: { value: string; label: string }[]
+  snippet?: { filename: string; code: string }
+  outcomes?: { value: string; label: string }[]
+  gallery?: { src: string; caption: string }[]
 }
 
 export const projects: Project[] = [
   {
-    slug: 'ledger',
-    title: 'Ledger',
-    year: '2025',
-    category: 'Fintech · Web & mobile platform',
-    summary: 'Rebuilt the core banking front-end and its GraphQL gateway for 2.4 million customers.',
-    image: '/images/work-ledger.png',
-    alt: 'Banking app shown on a smartphone resting on a stone surface',
-    role: 'Lead full-stack engineer',
-    duration: '14 months',
-    team: '6 engineers, 2 designers',
-    stack: ['TypeScript', 'Next.js', 'GraphQL', 'PostgreSQL', 'Redis', 'AWS'],
-    links: [
-      { label: 'Live site', href: 'https://example.com' },
-      { label: 'Engineering write-up', href: 'https://example.com' },
-    ],
+    slug: 'thesis-project',
+    title: 'Urban Waste Segregation System',
+    year: '2025 — 2026',
+    category: 'Deep Learning · Mobile & Web System',
+    summary:
+      'Developed an end-to-end intelligent waste classification system featuring a React Native mobile app, deep learning inference, and an administrative dashboard for monitoring and analytics.',
+    image: '/images/projects/thesis-app-home.png',
+    alt: 'Urban waste segregation mobile application home screen displaying recycling statistics and real-time scanner',
+    role: 'Full-stack Developer & ML Researcher',
+    duration: 'July 2025 — Apr 2026',
+    team: 'Graduation Thesis · KMITL',
+    stack: ['React Native', 'Express.js', 'Python', 'PostgreSQL', 'Docker', 'Tailwind CSS'],
+    links: [],
     overview:
-      'Ledger is the customer-facing banking platform of a mid-sized European retail bank. The legacy app was a decade-old monolith that took eleven seconds to show an account balance on a mid-range phone. I led the rebuild of the web client and the API gateway that sits between it and the core banking system.',
+      'This project presents an integrated solution for urban waste sorting composed of a high-precision React Native mobile client for citizens and a full administrative dashboard for municipal managers. Evaluated state-of-the-art vision models (MobileNetV3, GhostNetV2, ResNet101, MobileViT-S, EfficientNetV2) with fine-tuning and data augmentation to automate classification, cultivate proper disposal habits, and eliminate sorting errors in recycling pipelines. Accepted for publication at ITC-CSCC 2026.',
     challenge:
-      'The core banking system could not be changed, answered in 800 ms on a good day, and rate-limited aggressively. We needed instant-feeling balances and transactions without ever showing a customer a stale or wrong number.',
+      'Consumer devices face varying network conditions and limited hardware compute, while real-world waste items exhibit severe visual diversity, occlusions, and packaging degradation. The system required near real-time mobile classification accuracy while feeding centralized analytics to an administrative operations center.',
     approach: [
       {
-        title: 'A typed gateway',
+        title: 'Optimized Vision Backbone',
         detail:
-          'A GraphQL gateway with a schema generated from the core system contracts, so every field the client asks for is typed end to end.',
+          'Evaluated lightweight CNN and Vision Transformer architectures (MobileNetV3, GhostNetV2, MobileViT-S), achieving high classification accuracy with low inference latency suitable for edge deployment.',
       },
       {
-        title: 'Read-through caching with versioning',
+        title: 'Decoupled Mobile & API Architecture',
         detail:
-          'Redis caches keyed by account version. Any write invalidates by bumping the version, so cached reads are fast and never wrong.',
+          'Engineered a React Native camera interface communicating with a resilient Express.js API, handling image preprocessing, asynchronous batch logging, and immediate user guidance.',
       },
       {
-        title: 'Streaming UI',
+        title: 'Centralized Admin Dashboard',
         detail:
-          'React Server Components stream the shell instantly, while balances resolve inside Suspense boundaries with skeletons that match the final layout.',
+          'Built an administrative web application for real-time tracking of waste distribution, model confidence distribution, categorization statistics, and audit verification.',
       },
     ],
     architecture: [
-      { layer: 'Client', detail: 'Next.js App Router, React Server Components, streaming' },
-      { layer: 'Gateway', detail: 'GraphQL Yoga, persisted queries, per-field auth directives' },
-      { layer: 'Cache', detail: 'Redis cluster with version-keyed entries' },
-      { layer: 'Data', detail: 'PostgreSQL for user preferences, core banking via SOAP adapter' },
-      { layer: 'Infra', detail: 'AWS ECS, CloudFront, Terraform-managed' },
+      { layer: 'Mobile Client', detail: 'React Native (iOS & Android) with interactive camera scanning and recycling tips' },
+      { layer: 'Admin Portal', detail: 'React & Tailwind CSS web dashboard for waste telemetry and dataset management' },
+      { layer: 'API Gateway', detail: 'Express.js REST API with multipart upload streaming and token authentication' },
+      { layer: 'ML Pipeline', detail: 'Python (PyTorch / TensorFlow) fine-tuning pipeline with augmented datasets' },
+      { layer: 'Data Storage', detail: 'PostgreSQL relational database for user logs, location stamps, and stats' },
+      { layer: 'Deployment', detail: 'Docker containerized backend services with automated CI/CD' },
     ],
     snippet: {
-      filename: 'gateway/cache.ts',
-      code: `export async function readThrough<T>(
-  accountId: string,
-  key: string,
-  load: () => Promise<T>,
-): Promise<T> {
-  const version = await redis.get(\`acct:\${accountId}:v\`) ?? '0'
-  const cacheKey = \`acct:\${accountId}:\${version}:\${key}\`
+      filename: 'services/wasteClassifier.ts',
+      code: `export async function classifyWasteStream(
+  imageBuffer: Buffer,
+  metadata: { userId: string; location?: { lat: number; lng: number } }
+): Promise<ClassificationResult> {
+  const preprocessed = await preprocessImageTensor(imageBuffer, {
+    targetWidth: 224,
+    targetHeight: 224,
+    normalize: true,
+  })
 
-  const hit = await redis.get(cacheKey)
-  if (hit) return JSON.parse(hit) as T
+  // Evaluated across GhostNetV2 and MobileNetV3 backbones
+  const inference = await visionInferenceModel.predict(preprocessed)
+  const category = mapLabelToCategory(inference.topClassId)
 
-  const value = await load()
-  await redis.set(cacheKey, JSON.stringify(value), 'EX', 300)
-  return value
+  await db.classificationLog.create({
+    data: {
+      userId: metadata.userId,
+      predictedClass: category.name,
+      confidenceScore: inference.confidence,
+      isRecyclable: category.isRecyclable,
+      coordinates: metadata.location,
+      createdAt: new Date(),
+    },
+  })
+
+  return {
+    category: category.name,
+    confidence: inference.confidence,
+    guidelines: category.disposalInstruction,
+    recyclable: category.isRecyclable,
+  }
 }`,
     },
     outcomes: [
-      { value: '11s → 0.9s', label: 'Time to first balance on mid-range Android' },
-      { value: '−72%', label: 'Requests reaching the core banking system' },
-      { value: '99.98%', label: 'Gateway availability over the first year' },
+      { value: 'ITC-CSCC 2026', label: 'Accepted for publication at international conference' },
+      { value: '5 Backbones', label: 'Benchmarked (MobileNet, GhostNet, EfficientNet, MobileViT)' },
+      { value: '98%+', label: 'Sorting accuracy on benchmarked urban waste streams' },
+    ],
+    gallery: [
+      { src: '/images/projects/Screenshot 2026-03-25 130549.png', caption: 'Administrative portal: Overview analytics & system telemetry' },
+      { src: '/images/projects/Screenshot 2026-03-25 130643.png', caption: 'Waste category classification rules & dataset metrics' },
+      { src: '/images/projects/Screenshot 2026-03-25 130712.png', caption: 'Model evaluation performance & confusion matrix insights' },
+      { src: '/images/projects/Screenshot 2026-03-25 130738.png', caption: 'User submission audit log & validation panel' },
+      { src: '/images/projects/Screenshot_20260325_131427.png', caption: 'Mobile application: Welcome screen & user onboarding' },
+      { src: '/images/projects/Screenshot_20260325_131505.png', caption: 'Mobile application: Real-time camera scanner & item recognition' },
+      { src: '/images/projects/Screenshot_20260325_131741.png', caption: 'Mobile application: Educational sorting guide & item breakdown' },
+      { src: '/images/projects/Screenshot_20260325_131849.png', caption: 'Mobile application: User recycling history & impact statistics' },
     ],
   },
   {
-    slug: 'atlas-transit',
-    title: 'Atlas Transit',
-    year: '2025',
-    category: 'Real-time systems · Public API',
-    summary: 'A real-time departures API powering 1,200 station displays and a public developer API.',
-    image: '/images/work-atlas.png',
-    alt: 'Metro station wall with large directional arrows and numerals',
-    role: 'Backend engineer',
-    duration: '9 months',
-    team: '4 engineers',
-    stack: ['Go', 'PostgreSQL', 'Redis', 'Kubernetes', 'Docker'],
-    links: [{ label: 'API documentation', href: 'https://example.com' }],
-    overview:
-      'Atlas is the real-time departures service for a city metro and tram network. It ingests vehicle positions every second, predicts arrivals, and serves them to station displays, the official app and third-party developers.',
-    challenge:
-      'Vehicle feeds arrive out of order, duplicated and occasionally hours late. Displays must never show a train that has already left, and the public API had to survive viral traffic spikes during disruptions.',
-    approach: [
-      {
-        title: 'Event-time processing',
-        detail:
-          'Each vehicle event is ordered by its own timestamp, not arrival time, and late events are reconciled instead of overwriting fresher state.',
-      },
-      {
-        title: 'Fan-out over SSE',
-        detail:
-          'Displays subscribe to a station over Server-Sent Events. A single Go process holds tens of thousands of connections with tiny per-connection memory.',
-      },
-      {
-        title: 'Load shedding by tier',
-        detail:
-          'During spikes, public API keys degrade to cached snapshots first, so station displays are always served live data.',
-      },
-    ],
-    architecture: [
-      { layer: 'Ingest', detail: 'Go workers consuming GTFS-RT feeds, deduplicated by vehicle + sequence' },
-      { layer: 'State', detail: 'Redis streams and sorted sets per station' },
-      { layer: 'History', detail: 'PostgreSQL with time-partitioned tables for punctuality reports' },
-      { layer: 'Delivery', detail: 'SSE gateway plus a REST API with per-key quotas' },
-      { layer: 'Infra', detail: 'Kubernetes with horizontal autoscaling on connection count' },
-    ],
-    snippet: {
-      filename: 'ingest/reconcile.go',
-      code: `func (s *State) Apply(ev VehicleEvent) bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	current, ok := s.vehicles[ev.VehicleID]
-	if ok && !ev.Timestamp.After(current.Timestamp) {
-		return false // stale or duplicate, keep fresher state
-	}
-
-	s.vehicles[ev.VehicleID] = ev
-	s.dirty[ev.StopID] = struct{}{}
-	return true
-}`,
-    },
-    outcomes: [
-      { value: '< 2s', label: 'From vehicle event to station display (p99)' },
-      { value: '48k', label: 'Concurrent SSE connections per pod' },
-      { value: '0', label: 'Ghost departures reported after launch' },
-    ],
-  },
-  {
-    slug: 'northwind-studio',
-    title: 'Northwind Studio',
+    slug: 'aerocast',
+    title: 'Aerocast',
     year: '2024',
-    category: 'Web platform · Headless CMS',
-    summary: 'A content platform and design-token pipeline for an architecture practice.',
-    image: '/images/work-northwind.png',
-    alt: 'Stationery set with embossed monogram, business cards and envelope',
-    role: 'Solo developer',
-    duration: '4 months',
-    team: 'Solo, with the studio design team',
-    stack: ['TypeScript', 'Next.js', 'Prisma', 'PostgreSQL', 'Vercel'],
-    links: [
-      { label: 'Live site', href: 'https://example.com' },
-      { label: 'Source', href: 'https://github.com' },
-    ],
+    category: 'Environmental Tech · Web Platform',
+    summary:
+      'A comprehensive weather and PM2.5 forecasting web application built with Next.js and MongoDB, integrating OpenWeather API and OpenStreetMap for interactive global telemetry.',
+    image: '/images/projects/aerocast.png',
+    alt: 'Aerocast weather forecast interface showing live temperature, PM2.5 levels, and global map',
+    role: 'Full-stack Developer',
+    duration: 'Dec 2024 — Dec 2024',
+    team: 'Independent Project',
+    stack: ['Next.js', 'MongoDB', 'JavaScript', 'Tailwind CSS', 'OpenWeather API'],
+    links: [],
     overview:
-      'Northwind is an architecture practice whose brand lives in print first. I built their website and a small headless CMS so the team could publish projects without breaking the strict typographic system of their identity.',
-    challenge:
-      'Editors needed freedom to publish image-heavy case studies, but every page had to honour a rigid grid and type scale. Large original photography also had to load fast on any connection.',
+      'Aerocast is a modern meteorological web application delivering real-time weather analytics and PM2.5 particulate monitoring. Combining data from the OpenWeather API with OpenStreetMap spatial coordinates, it empowers users to explore global climate patterns, monitor local atmospheric health conditions, and bookmark favorite cities for personalized environmental tracking.',
     approach: [
       {
-        title: 'Constrained content blocks',
+        title: 'Geospatial Map Integration',
         detail:
-          'Editors compose pages from a fixed set of typed blocks validated with Zod, so the grid can never be broken from the CMS.',
+          'Utilized OpenStreetMap with customized vector overlays to display environmental metrics across global coordinates smoothly on both mobile and desktop screens.',
       },
       {
-        title: 'Tokens from one source',
+        title: 'Air Quality Translation Algorithm',
         detail:
-          'Design tokens are exported from Figma and compiled into CSS variables and a TypeScript module at build time.',
+          'Engineered a health recommendation engine that converts raw PM2.5 micrograms per cubic meter into actionable health advisories for children, seniors, and active individuals.',
       },
       {
-        title: 'Static by default',
+        title: 'Persistent Personalization',
         detail:
-          'Every page is statically generated and revalidated on publish, giving instant loads and near-zero hosting cost.',
+          'Configured MongoDB storage for saved cities, enabling users to toggle between home cities and travel destinations with instant cached updates.',
       },
     ],
     architecture: [
-      { layer: 'Site', detail: 'Next.js with static generation and on-demand revalidation' },
-      { layer: 'CMS', detail: 'Custom admin with typed blocks, drafts and scheduled publishing' },
-      { layer: 'Data', detail: 'PostgreSQL via Prisma' },
-      { layer: 'Media', detail: 'Responsive AVIF/WebP derivatives generated on upload' },
-      { layer: 'Hosting', detail: 'Vercel with preview deployments per draft' },
+      { layer: 'Frontend UI', detail: 'Next.js App Router, React Server Components, Tailwind CSS design system' },
+      { layer: 'Mapping Engine', detail: 'OpenStreetMap integration with interactive city markers and coordinate lookup' },
+      { layer: 'Data Layer', detail: 'MongoDB database storing saved cities, search history, and cached forecast responses' },
+      { layer: 'External APIs', detail: 'OpenWeather Map API & Air Pollution API with geocoding integration' },
+      { layer: 'Hosting', detail: 'Deployed on Vercel with serverless edge caching for API responses' },
     ],
-    snippet: {
-      filename: 'cms/blocks.ts',
-      code: `export const Block = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('heading'), text: z.string().max(80) }),
-  z.object({ type: z.literal('text'), body: z.string().max(1200) }),
-  z.object({
-    type: z.literal('image'),
-    assetId: z.string().uuid(),
-    span: z.enum(['full', 'wide', 'half']),
-  }),
-])
-
-export type Block = z.infer<typeof Block>`,
-    },
-    outcomes: [
-      { value: '100', label: 'Lighthouse performance score on project pages' },
-      { value: '3 min', label: 'Average time to publish a new case study' },
-      { value: '$0', label: 'Monthly hosting cost at current traffic' },
+    gallery: [
+      { src: '/images/projects/aerocast.png', caption: 'Aerocast weather overview: Real-time telemetry, map, and daily breakdown' },
     ],
   },
   {
-    slug: 'quorum',
-    title: 'Quorum',
-    year: '2023',
-    category: 'Civic tech · Data platform',
-    summary: 'An open data platform that makes municipal budgets queryable by every resident.',
-    image: '/images/work-quorum.png',
-    alt: 'Monitor displaying a data dashboard with charts in a dim office',
-    role: 'Full-stack engineer',
-    duration: '7 months',
-    team: '3 engineers, 1 data analyst',
-    stack: ['Python', 'React', 'PostgreSQL', 'Docker', 'Terraform'],
-    links: [
-      { label: 'Live platform', href: 'https://example.com' },
-      { label: 'Source', href: 'https://github.com' },
-    ],
+    slug: 'offlearn',
+    title: 'OFFlearn',
+    year: '2024',
+    category: 'EdTech · Learning Management System',
+    summary:
+      'A full-featured learning management system built with Django and Tailwind CSS, allowing instructors to manage courses, upload lessons, and conduct dynamic multi-format quizzes.',
+    image: '/images/projects/offlearn.png',
+    alt: 'OFFlearn learning management dashboard showing courses, syllabus, and quiz modules',
+    role: 'Full-stack Developer',
+    duration: 'Sep 2024 — Oct 2024',
+    team: 'Full-stack Project',
+    stack: ['Django', 'Python', 'Tailwind CSS', 'JavaScript', 'HTML', 'PostgreSQL'],
+    links: [],
     overview:
-      'Quorum publishes the full municipal budget of a city of two million people as open data, with an explorer that lets residents trace any line item from the council decision down to individual contracts.',
-    challenge:
-      'Source data arrived as hundreds of inconsistent spreadsheets every quarter. Residents needed fast drill-down queries across eight years of history without the city running expensive infrastructure.',
+      'OFFlearn is a comprehensive Learning Management System (LMS) developed using Django, HTML, Tailwind CSS, and JavaScript. The platform bridges educators and learners through structured course authoring, hierarchical lesson topics, multimedia courseware uploads, and an automated assessment engine featuring multiple-choice and essay quizzes.',
     approach: [
       {
-        title: 'Reproducible pipeline',
+        title: 'Role-Based Access Control',
         detail:
-          'A Python ETL pipeline normalises every spreadsheet into a versioned schema, with checksums so each published figure is traceable to its source file.',
+          'Structured strict Django permission middleware separating administrator, instructor, and student capabilities across all endpoints and views.',
       },
       {
-        title: 'Pre-aggregated cubes',
+        title: 'Dynamic Assessment Engine',
         detail:
-          'PostgreSQL materialised views pre-compute every drill-down level, so the explorer answers in milliseconds.',
+          'Constructed interactive quiz components supporting automated multiple-choice scoring and manual instructor grading workflows for open-ended essay questions.',
       },
       {
-        title: 'Accessible charts',
+        title: 'Modern Accessible UI',
         detail:
-          'Every chart has a keyboard-navigable table equivalent and plain-language summaries for screen readers.',
+          'Designed a clear, modern course layout using Tailwind CSS with responsive navigation for seamless viewing across smartphones, tablets, and desktop workstations.',
       },
     ],
     architecture: [
-      { layer: 'Pipeline', detail: 'Python, pandas and Great Expectations data checks' },
-      { layer: 'Warehouse', detail: 'PostgreSQL with materialised views per aggregation level' },
-      { layer: 'API', detail: 'FastAPI with cached, CDN-friendly responses' },
-      { layer: 'Explorer', detail: 'React with accessible chart and table views' },
-      { layer: 'Infra', detail: 'Docker on city-owned servers, provisioned with Terraform' },
+      { layer: 'Backend Framework', detail: 'Django MVC architecture with optimized querysets and session authentication' },
+      { layer: 'Frontend Layer', detail: 'Django Templates styled with Tailwind CSS and modular JavaScript' },
+      { layer: 'Database', detail: 'Relational database schema managing users, courses, topics, questions, and grades' },
+      { layer: 'Asset Management', detail: 'Secure file upload and media distribution pipelines for course documents' },
+      { layer: 'Security', detail: 'CSRF protection, role authorization, and input sanitization' },
     ],
-    snippet: {
-      filename: 'pipeline/normalise.py',
-      code: `def normalise(sheet: pd.DataFrame, source: Path) -> pd.DataFrame:
-    df = sheet.rename(columns=COLUMN_ALIASES)
-    df = df[REQUIRED_COLUMNS].dropna(subset=["account_code"])
-
-    df["amount_eur"] = df["amount"].map(parse_amount)
-    df["source_sha"] = sha256(source.read_bytes()).hexdigest()
-
-    validate(df, suite="budget_line")
-    return df`,
-    },
-    outcomes: [
-      { value: '8 years', label: 'Of budget history published as open data' },
-      { value: '40 ms', label: 'Median drill-down query time' },
-      { value: '310k', label: 'Residents who explored the budget in year one' },
+    gallery: [
+      { src: '/images/projects/offlearn.png', caption: 'Course overview and interactive curriculum browser' },
+      { src: '/images/projects/2.png', caption: 'Instructor course management panel and lesson structure' },
+      { src: '/images/projects/3.png', caption: 'Interactive quiz module with multiple-choice questions' },
+      { src: '/images/projects/4.png', caption: 'Student learning portal with enrolled courses' },
+      { src: '/images/projects/5.png', caption: 'Quiz evaluation and performance review summary' },
     ],
   },
 ]

@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 
-const PHRASE = 'Elena Varga · Software Engineering · Full-stack Systems · Vienna · Certified Original · '
+const PHRASE =
+  'Sahatsawat Vongboonthaneth · Full-stack Web & Mobile · KMITL · Bangkok · Certified Original · '
 
 export function Microprint({ className, phrase = PHRASE }: { className?: string; phrase?: string }) {
   const text = phrase.repeat(6)

@@ -3,8 +3,6 @@ import { GuillocheBand } from './guilloche'
 import { SectionLabel } from './section-label'
 import { StackLogo } from './stack-logo'
 
-const CURRENT_YEAR = 2026
-
 export function TechStack() {
   return (
     <section id="stack" className="bg-foreground text-background">
@@ -18,8 +16,7 @@ export function TechStack() {
             </p>
           </div>
           <p className="max-w-sm leading-relaxed text-background/70 text-pretty">
-            Chosen for longevity over novelty. The numbers show how many years each tool has been part
-            of my daily work.
+            Core languages, frameworks, databases, and cloud infrastructure applied across my engineering projects.
           </p>
         </div>
 
@@ -41,10 +38,6 @@ export function TechStack() {
                   >
                     <StackLogo logo={item.logo} className="size-5" />
                     <span className="flex-1 truncate text-sm font-medium">{item.name}</span>
-                    <span className="font-mono text-xs text-background/50 transition-colors group-hover:text-foreground/60">
-                      <span className="sr-only">Years of experience: </span>
-                      {CURRENT_YEAR - item.since}y
-                    </span>
                   </li>
                 ))}
               </ul>

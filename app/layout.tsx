@@ -7,9 +7,9 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
 export const metadata: Metadata = {
-  title: 'Elena Varga — Full-stack Software Engineer',
+  title: 'Sahatsawat Vongboonthaneth — Full-stack Software Engineer',
   description:
-    'Portfolio of Elena Varga, a full-stack software engineer building fast, reliable systems with TypeScript, Go, React and PostgreSQL.',
+    'Portfolio of Sahatsawat Vongboonthaneth, a full-stack software engineer specializing in web and mobile applications with Next.js, React, React Native, Express.js, and Django.',
   generator: 'v0.app',
   icons: {
     icon: [
