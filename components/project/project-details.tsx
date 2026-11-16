@@ -3,7 +3,6 @@ import type { Project } from '@/lib/projects'
 import { getLogo } from '@/lib/stack'
 import { SectionLabel } from '@/components/portfolio/section-label'
 import { StackLogo } from '@/components/portfolio/stack-logo'
-import { CodeSnippet } from './code-snippet'
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -47,20 +46,15 @@ export function ProjectDetails({ project }: { project: Project }) {
         <Row label="Gallery">
           <div className="grid gap-8 sm:grid-cols-2">
             {project.gallery.map((item, idx) => (
-              <figure key={idx} className="flex flex-col gap-3">
-                <div className="relative aspect-[16/10] overflow-hidden rounded-xl border bg-muted/30">
-                  <Image
-                    src={item.src}
-                    alt={item.caption}
-                    fill
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                    className="object-contain p-2 transition-transform duration-500 hover:scale-[1.02]"
-                  />
-                </div>
-                <figcaption className="font-mono text-xs text-muted-foreground">
-                  {item.caption}
-                </figcaption>
-              </figure>
+              <div key={idx} className="relative aspect-[16/10] overflow-hidden rounded-xl border bg-muted/30">
+                <Image
+                  src={item.src}
+                  alt={`${project.title} screenshot ${idx + 1}`}
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-contain p-2 transition-transform duration-500 hover:scale-[1.02]"
+                />
+              </div>
             ))}
           </div>
         </Row>
@@ -81,13 +75,6 @@ export function ProjectDetails({ project }: { project: Project }) {
           ))}
         </dl>
       </Row>
-
-      {/* In the code: Kept only for Urban Waste Segregation System */}
-      {isThesis && project.snippet && (
-        <Row label="In the code">
-          <CodeSnippet filename={project.snippet.filename} code={project.snippet.code} />
-        </Row>
-      )}
 
       {/* Outcomes: Kept only for Urban Waste Segregation System */}
       {isThesis && project.outcomes && project.outcomes.length > 0 && (

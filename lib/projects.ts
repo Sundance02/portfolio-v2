@@ -64,41 +64,6 @@ export const projects: Project[] = [
       { layer: 'Data Storage', detail: 'PostgreSQL relational database for user logs, location stamps, and stats' },
       { layer: 'Deployment', detail: 'Docker containerized backend services with automated CI/CD' },
     ],
-    snippet: {
-      filename: 'services/wasteClassifier.ts',
-      code: `export async function classifyWasteStream(
-  imageBuffer: Buffer,
-  metadata: { userId: string; location?: { lat: number; lng: number } }
-): Promise<ClassificationResult> {
-  const preprocessed = await preprocessImageTensor(imageBuffer, {
-    targetWidth: 224,
-    targetHeight: 224,
-    normalize: true,
-  })
-
-  // Evaluated across GhostNetV2 and MobileNetV3 backbones
-  const inference = await visionInferenceModel.predict(preprocessed)
-  const category = mapLabelToCategory(inference.topClassId)
-
-  await db.classificationLog.create({
-    data: {
-      userId: metadata.userId,
-      predictedClass: category.name,
-      confidenceScore: inference.confidence,
-      isRecyclable: category.isRecyclable,
-      coordinates: metadata.location,
-      createdAt: new Date(),
-    },
-  })
-
-  return {
-    category: category.name,
-    confidence: inference.confidence,
-    guidelines: category.disposalInstruction,
-    recyclable: category.isRecyclable,
-  }
-}`,
-    },
     outcomes: [
       { value: 'ITC-CSCC 2026', label: 'Accepted for publication at international conference' },
       { value: '5 Backbones', label: 'Benchmarked (MobileNet, GhostNet, EfficientNet, MobileViT)' },
